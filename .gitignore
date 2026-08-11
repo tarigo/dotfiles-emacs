@@ -5,6 +5,7 @@
 
 !/.gitignore
 !/README.md
+!/README.en.md
 !/init.el
 !/early-init.el
 !/init.d

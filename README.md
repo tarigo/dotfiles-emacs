@@ -1,5 +1,7 @@
 # Конфигурация Emacs
 
+*English version: [README.en.md](README.en.md).*
+
 Модульная конфигурация для Emacs 30+. Пакеты ставятся автоматически при
 первом запуске (`use-package` + `:ensure`, архивы GNU/NonGNU ELPA и MELPA).
 

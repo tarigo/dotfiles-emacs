@@ -5,6 +5,12 @@
 Модульная конфигурация для Emacs 30+. Пакеты ставятся автоматически при
 первом запуске (`use-package` + `:ensure`, архивы GNU/NonGNU ELPA и MELPA).
 
+![Emacs: тема «зелёный фосфор», Treemacs, rustic + LSP, справа — сессия Claude Code](screenshots/overview.png)
+
+*Тема «зелёный фосфор»: слева Treemacs, в центре Rust (rustic +
+lsp-mode), справа — сессия Claude Code (claude-code-ide) в терминале
+ghostel.*
+
 ## Установка на новой машине
 
 ```sh

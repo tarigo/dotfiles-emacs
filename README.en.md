@@ -6,6 +6,12 @@ Modular configuration for Emacs 30+. Packages install themselves on
 first launch (`use-package` + `:ensure`, GNU/NonGNU ELPA and MELPA
 archives).
 
+![Emacs: “green phosphor” theme, Treemacs, rustic + LSP, Claude Code session on the right](screenshots/overview.png)
+
+*The “green phosphor” theme: Treemacs on the left, Rust (rustic +
+lsp-mode) in the middle, a Claude Code session (claude-code-ide) in the
+ghostel terminal on the right.*
+
 ## Installation on a fresh machine
 
 ```sh

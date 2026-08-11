@@ -1,0 +1,11 @@
+# Игнорируем всё: Emacs плодит файлы состояния (recentf, transient/,
+# .lsp-session-v1 и т.п.). Отслеживаем только саму конфигурацию —
+# новые файлы нужно явно добавлять в whitelist ниже.
+/*
+
+!/.gitignore
+!/README.md
+!/init.el
+!/early-init.el
+!/init.d
+!/systemd

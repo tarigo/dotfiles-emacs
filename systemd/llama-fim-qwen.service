@@ -1,0 +1,21 @@
+[Unit]
+Description=llama-server: FIM-автодополнение, Qwen2.5-Coder-3B base (порт 8012)
+# Оба сервера не влезают в 4 ГБ VRAM — запуск одного гасит другой.
+Conflicts=llama-fim-mellum.service
+
+[Service]
+# --cache-reuse: повторное использование KV-кэша по префиксу — при наборе
+# текста повторные запросы почти не тратят время на обработку промпта.
+ExecStart=/usr/bin/llama-server \
+    --model %h/models/Qwen2.5-Coder-3B-Q5_K_M.gguf \
+    --host 127.0.0.1 \
+    --port 8012 \
+    --gpu-layers 99 \
+    --ctx-size 8192 \
+    --batch-size 1024 \
+    --ubatch-size 1024 \
+    --cache-reuse 256
+Restart=on-failure
+
+[Install]
+WantedBy=default.target

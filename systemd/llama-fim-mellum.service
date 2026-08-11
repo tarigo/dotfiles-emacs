@@ -1,0 +1,25 @@
+[Unit]
+Description=llama-server: FIM-автодополнение, JetBrains Mellum-4b base (порт 8012)
+# Оба сервера не влезают в 4 ГБ VRAM — запуск одного гасит другой.
+Conflicts=llama-fim-qwen.service
+
+[Service]
+# У Mellum нет GQA (24 KV-головы) — KV-кэш тяжёлый, ~360 КБ на токен.
+# Поэтому контекст 4096 и q8-квант кэша (требует flash-attn),
+# иначе вместе с весами не влезает в 4 ГБ VRAM.
+ExecStart=/usr/bin/llama-server \
+    --model %h/models/Mellum-4b-base.Q4_K_M.gguf \
+    --host 127.0.0.1 \
+    --port 8012 \
+    --gpu-layers 99 \
+    --ctx-size 4096 \
+    --flash-attn on \
+    --cache-type-k q8_0 \
+    --cache-type-v q8_0 \
+    --batch-size 512 \
+    --ubatch-size 512 \
+    --cache-reuse 256
+Restart=on-failure
+
+[Install]
+WantedBy=default.target

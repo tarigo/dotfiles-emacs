@@ -86,6 +86,7 @@ tracked by git, so `M-x package-autoremove` is safe on any machine.
 ```
 early-init.el              — GC, read-process-output-max, disabling UI before the first frame
 init.el                    — entry point: paths, load-path, module order
+private.el                 — local/work settings, untracked (see below)
 init.d/
   basics/
     package-management.el  — package archives, use-package
@@ -193,17 +194,47 @@ init.d/
 `s` shopping · `l` study card (study.org, anki-editor format) ·
 `e` / `i` expense / income (ledger) · `j` journal
 
+## Local settings (`private.el`)
+
+Everything personal or work-specific — the real budget structure,
+job-specific capture templates, machine-local values — lives in
+`private.el` at the config root. init.el loads it when present (a fresh
+clone works fine without it), and the `.gitignore` whitelist guarantees
+it never reaches git.
+
+A starting point with sensible defaults:
+
+```elisp
+;;; private.el --- Local/work settings, kept out of git -*- lexical-binding: t -*-
+
+;; The real budget structure: finance.el builds the expense/income
+;; capture templates (C-c c e / C-c c i) from these on first capture.
+(setq my/ledger-expense-categories '("Food" "Home" "Transport" "Health" "Fun" "Misc")
+      my/ledger-income-categories  '("Salary" "Misc")
+      my/ledger-accounts           '("Checking" "Cash")
+      my/ledger-currency           "EUR")
+
+;; Work tasks: a private capture template (C-c c r) and an agenda view (C-c a rw).
+(add-to-list 'org-capture-templates
+             `("r" "Work task" entry
+               (file+headline ,(expand-file-name "tasks.org" my/org-dir) "Work")
+               "* NEXT %^{Title} :work:\n%?")
+             t)
+
+(add-to-list 'org-agenda-custom-commands
+             '("rw" "Work" ((tags-todo "+work")))
+             t)
+
+;;; private.el ends here
+```
+
 ## Notes
 
 - `.gitignore` works as a whitelist: a new configuration file must be
   explicitly added with a `!/name` line.
-- Local and work-specific settings go into `private.el` at the config
-  root: init.el loads it when present, and git never picks it up (not
-  in the whitelist). The same place is for personal values of the
-  finance.el variables (`my/ledger-expense-categories`, accounts,
-  currency) and private capture templates.
-- `custom.el` also lives at the root, untracked: only Custom and
-  package.el (the selected-packages list) write there.
+- `custom.el` lives at the root, untracked (like `private.el`, see
+  above): only Custom and package.el (the selected-packages list)
+  write there.
 - LSP: if a project refuses to open, check whether its root
   (or `~/`!) ended up in the blocklist —
   `M-x lsp-workspace-blocklist-remove`.

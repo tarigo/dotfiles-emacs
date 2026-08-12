@@ -84,6 +84,7 @@ systemctl --user enable --now llama-fim-qwen
 ```
 early-init.el              — GC, read-process-output-max, отключение UI до первого фрейма
 init.el                    — точка входа: пути, load-path, порядок модулей
+private.el                 — локальные/рабочие настройки вне git (см. ниже)
 init.d/
   basics/
     package-management.el  — архивы пакетов, use-package
@@ -189,16 +190,46 @@ init.d/
 `s` покупки · `l` учебная карточка (study.org, формат anki-editor) ·
 `e` / `i` расход / доход (ledger) · `j` журнал
 
+## Локальные настройки (`private.el`)
+
+Всё личное и рабочее — реальная структура бюджета, capture-шаблоны под
+конкретную работу, машинно-специфичные значения — живёт в `private.el`
+в корне конфига. init.el загружает его, если он есть (свежий клон
+работает и без него), а whitelist в `.gitignore` гарантирует, что в git
+он не попадёт.
+
+Заготовка с разумными значениями по умолчанию:
+
+```elisp
+;;; private.el --- Локальные/рабочие настройки, не для git -*- lexical-binding: t -*-
+
+;; Реальная структура бюджета: finance.el соберёт из этих значений
+;; capture-шаблоны расхода/дохода (C-c c e / C-c c i) при первом capture.
+(setq my/ledger-expense-categories '("Food" "Home" "Transport" "Health" "Fun" "Misc")
+      my/ledger-income-categories  '("Salary" "Misc")
+      my/ledger-accounts           '("Checking" "Cash")
+      my/ledger-currency           "EUR")
+
+;; Рабочие задачи: свой capture-шаблон (C-c c r) и срез агенды (C-c a rw).
+(add-to-list 'org-capture-templates
+             `("r" "Work task" entry
+               (file+headline ,(expand-file-name "tasks.org" my/org-dir) "Work")
+               "* NEXT %^{Задача} :work:\n%?")
+             t)
+
+(add-to-list 'org-agenda-custom-commands
+             '("rw" "Работа" ((tags-todo "+work")))
+             t)
+
+;;; private.el ends here
+```
+
 ## Замечания
 
 - `.gitignore` работает по whitelist: новый файл конфигурации нужно
   явно добавить строкой `!/имя`.
-- Локальные и рабочие настройки — в `private.el` в корне конфига:
-  init.el загружает его, если он есть, а в git он не попадает (не входит
-  в whitelist). Туда же — личные значения переменных finance.el
-  (`my/ledger-expense-categories`, счета, валюта) и приватные
-  capture-шаблоны.
-- `custom.el` тоже живёт в корне локально и в git не входит: туда пишут
-  только Custom и package.el (список выбранных пакетов).
+- `custom.el` живёт в корне локально и в git не входит (как и
+  `private.el`, см. выше): туда пишут только Custom и package.el
+  (список выбранных пакетов).
 - LSP: если проект не открывается, проверьте, не попал ли его корень
   (или `~/`!) в blocklist — `M-x lsp-workspace-blocklist-remove`.
